@@ -18,7 +18,7 @@ export default async function AdminPage() {
     { data: allProgress },
     { count: inviteCount },
   ] = await Promise.all([
-    supabase.from('profiles').select('id, email, full_name, role, created_at, last_seen_at').order('created_at', { ascending: false }),
+    supabase.from('profiles').select('*').order('created_at', { ascending: false }),
     supabase.from('courses').select('id, modules(id, lessons(id))'),
     supabase.from('lesson_progress').select('user_id, lesson_id'),
     supabase.from('invite_tokens').select('*', { count: 'exact', head: true }).gt('use_count', 0),
