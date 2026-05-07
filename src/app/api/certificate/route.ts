@@ -1,6 +1,7 @@
+import React from 'react'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { renderToBuffer } from '@react-pdf/renderer'
+import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { CertificatePDF } from '@/components/CertificatePDF'
 
 interface Lesson  { id: string; is_published: boolean }
@@ -32,9 +33,8 @@ export async function GET() {
   const courseTitle = course?.title ?? 'AI Methode Academy'
   const issuedAt    = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
 
-  const buffer = await renderToBuffer(
-    CertificatePDF({ fullName, courseTitle, issuedAt })
-  )
+  const element = React.createElement(CertificatePDF, { fullName, courseTitle, issuedAt }) as React.ReactElement<DocumentProps>
+  const buffer = await renderToBuffer(element)
 
   return new NextResponse(new Uint8Array(buffer), {
     status: 200,
