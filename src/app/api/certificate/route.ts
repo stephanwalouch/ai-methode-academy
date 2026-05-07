@@ -33,14 +33,20 @@ export async function GET() {
   const courseTitle = course?.title ?? 'AI Methode Academy'
   const issuedAt    = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
 
-  const element = React.createElement(CertificatePDF, { fullName, courseTitle, issuedAt }) as React.ReactElement<DocumentProps>
-  const buffer = await renderToBuffer(element)
+  try {
+    const element = React.createElement(CertificatePDF, { fullName, courseTitle, issuedAt }) as React.ReactElement<DocumentProps>
+    const buffer = await renderToBuffer(element)
 
-  return new NextResponse(new Uint8Array(buffer), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="Zertifikat-AI-Methode-Academy.pdf"`,
-    },
-  })
+    return new NextResponse(new Uint8Array(buffer), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="Zertifikat-AI-Methode-Academy.pdf"`,
+      },
+    })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[certificate] PDF generation failed:', msg)
+    return NextResponse.json({ error: 'PDF generation failed', detail: msg }, { status: 500 })
+  }
 }

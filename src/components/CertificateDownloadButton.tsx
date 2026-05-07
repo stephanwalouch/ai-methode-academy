@@ -10,7 +10,10 @@ export function CertificateDownloadButton() {
     setLoading(true)
     try {
       const res = await fetch('/api/certificate')
-      if (!res.ok) throw new Error('Fehler beim Erstellen')
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(`HTTP ${res.status}: ${text}`)
+      }
       const blob = await res.blob()
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
@@ -19,7 +22,7 @@ export function CertificateDownloadButton() {
       a.click()
       URL.revokeObjectURL(url)
     } catch (e) {
-      alert('Zertifikat konnte nicht erstellt werden. Bitte versuche es erneut.')
+      alert('Fehler: ' + (e instanceof Error ? e.message : String(e)))
     } finally {
       setLoading(false)
     }
