@@ -36,7 +36,7 @@ export function UserActions({ userId, userName, isBanned }: Props) {
         setBanOpen(false)
       } catch (err) {
         console.error(err)
-        alert('Fehler beim Sperren des Nutzers.')
+        alert('Fehler beim Sperren:\n' + (err instanceof Error ? err.message : String(err)))
         setBanOpen(false)
       }
     })
