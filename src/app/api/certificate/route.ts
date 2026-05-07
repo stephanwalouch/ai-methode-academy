@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
+export const dynamic = 'force-dynamic'
+
 const LOGO_URL = 'https://www.ai-methode.de/logo-aim.png'
 
 const GOLD   = rgb(0.722, 0.573, 0.165)   // #b8922a
@@ -185,6 +187,7 @@ export async function GET() {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="Zertifikat-AI-Methode-Academy.pdf"`,
+        'Cache-Control': 'no-store',
       },
     })
   } catch (e) {

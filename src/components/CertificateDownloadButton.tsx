@@ -9,7 +9,7 @@ export function CertificateDownloadButton() {
   async function handleDownload() {
     setLoading(true)
     try {
-      const res = await fetch('/api/certificate')
+      const res = await fetch(`/api/certificate?t=${Date.now()}`, { cache: 'no-store' })
       if (!res.ok) {
         const text = await res.text()
         throw new Error(`HTTP ${res.status}: ${text}`)
