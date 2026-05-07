@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { ArrowLeft, Mail } from 'lucide-react'
 import Link from 'next/link'
 
@@ -15,16 +14,19 @@ export default function PasswortVergessenPage() {
     e.preventDefault()
     setError(null)
     setLoading(true)
-    const supabase = createClient()
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/passwort-reset`,
-    })
-    setLoading(false)
-    if (error) {
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) throw new Error('Server error')
+      setSent(true)
+    } catch {
       setError('Es ist ein Fehler aufgetreten. Bitte versuche es erneut.')
-      return
+    } finally {
+      setLoading(false)
     }
-    setSent(true)
   }
 
   return (

@@ -22,7 +22,8 @@
     "next": "^15.3.9",
     "postcss-selector-parser": "^7.1.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "resend": "^6.12.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

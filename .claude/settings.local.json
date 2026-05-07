@@ -33,7 +33,8 @@
       "Bash(sed -i '' \"s/import { Palette, Save } from 'lucide-react'/import { Save } from 'lucide-react'/\" src/app/admin/branding/page.tsx)",
       "Bash(sed -i '' \"s/import { CheckCircle, Circle, PlayCircle, ChevronDown, X, ListVideo } from 'lucide-react'/import { CheckCircle, Circle, PlayCircle, X, ListVideo } from 'lucide-react'/\" \"src/app/\\(platform\\)/kurse/[courseId]/lektion/[lessonId]/LessonSidebar.tsx\")",
       "Bash(xargs cat)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(node -e \"require\\('resend'\\)\")"
     ]
   }
 }
