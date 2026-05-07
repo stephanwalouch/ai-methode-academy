@@ -178,11 +178,9 @@ export async function GET() {
     // Inner ring
     page.drawCircle({ x: sealX, y: sealY, size: 26, borderColor: GOLD,   borderWidth: 0.5 })
 
-    // Star / checkmark in center
-    const starLines = ['✓']
-    const checkSize = 18
-    const checkW = fontBold.widthOfTextAtSize('✓', checkSize)
-    page.drawText('✓', { x: sealX - checkW / 2, y: sealY - 6, font: fontBold, size: checkSize, color: GOLD })
+    // Checkmark drawn as two lines (✓ can't be encoded in WinAnsi)
+    page.drawLine({ start: { x: sealX - 9, y: sealY - 1 }, end: { x: sealX - 3, y: sealY - 8 }, thickness: 2.5, color: GOLD })
+    page.drawLine({ start: { x: sealX - 3, y: sealY - 8 }, end: { x: sealX + 10, y: sealY + 8 }, thickness: 2.5, color: GOLD })
 
     // Seal text lines
     const sealTopLine   = 'AI METHODE'
