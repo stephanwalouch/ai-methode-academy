@@ -20,7 +20,7 @@ export default async function EinladungenPage() {
     `)
     .order('created_at', { ascending: false })
 
-  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://academy.ai-methode.de'
+  const appUrl = 'https://academy.ai-methode.de'
 
   return (
     <div className="space-y-8">

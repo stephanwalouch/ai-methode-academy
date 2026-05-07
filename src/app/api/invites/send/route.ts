@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const token      = nanoid(24)
-  const appUrl     = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const appUrl     = 'https://academy.ai-methode.de'
   const inviteUrl  = `${appUrl}/registrieren?token=${token}`
   const displayName = [firstName, lastName].filter(Boolean).join(' ') || email || 'Mitglied'
 
