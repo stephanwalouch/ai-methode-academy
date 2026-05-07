@@ -70,7 +70,7 @@ export async function deleteUser(userId: string) {
 
 // ─── Ban User ─────────────────────────────────────────────────────────────────
 export async function banUser(userId: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { error } = await supabase
     .from('profiles')
@@ -83,7 +83,7 @@ export async function banUser(userId: string) {
 
 // ─── Unban User ───────────────────────────────────────────────────────────────
 export async function unbanUser(userId: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { error } = await supabase
     .from('profiles')
