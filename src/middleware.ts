@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = path === '/login' || path === '/registrieren'
   const isAdminRoute = path.startsWith('/admin')
-  const isPublicRoute = path === '/' || path === '/impressum' || path === '/datenschutz' || path === '/passwort-vergessen' || path === '/passwort-reset'
+  const isPublicRoute = path === '/' || path === '/impressum' || path === '/datenschutz' || path === '/passwort-vergessen' || path === '/passwort-reset' || path.startsWith('/api/invites/')
 
   if (!user && !isAuthRoute && !isPublicRoute) {
     const loginUrl = request.nextUrl.clone()
