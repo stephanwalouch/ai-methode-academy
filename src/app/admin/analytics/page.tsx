@@ -24,10 +24,12 @@ export default async function AnalyticsPage() {
 
   const students = (profiles ?? []).filter(p => p.role !== 'admin')
   const totalStudents = students.length
+  const studentIds = new Set(students.map(s => s.id))
 
-  // Completion count per lesson
+  // Completion count per lesson — admins excluded
   const completionByLesson = new Map<string, number>()
   allProgress?.forEach(p => {
+    if (!studentIds.has(p.user_id)) return
     completionByLesson.set(p.lesson_id, (completionByLesson.get(p.lesson_id) ?? 0) + 1)
   })
 
