@@ -3,6 +3,7 @@ import { redirect }     from 'next/navigation'
 import Link             from 'next/link'
 import { ConfettiCelebration } from '@/components/ConfettiCelebration'
 import { LogoImage }    from '@/components/LogoImage'
+import { CertificateDownloadButton } from '@/components/CertificateDownloadButton'
 
 export default async function AbschlussPage() {
   const supabase = await createClient()
@@ -73,13 +74,16 @@ export default async function AbschlussPage() {
         <span className="text-sm font-medium text-gray-500">Lektionen abgeschlossen</span>
       </div>
 
-      {/* CTA Button */}
-      <Link
-        href="/dashboard"
-        className="btn-primary px-8 py-3 text-base"
-      >
-        Zurück zum Dashboard
-      </Link>
+      {/* Zertifikat + CTA */}
+      <div className="flex flex-col items-center gap-3 sm:flex-row">
+        <CertificateDownloadButton />
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-7 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:scale-[1.02]"
+        >
+          Zurück zum Dashboard
+        </Link>
+      </div>
     </div>
   )
 }
