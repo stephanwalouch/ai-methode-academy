@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { PDFDocument, rgb, StandardFonts, PageSizes } from 'pdf-lib'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+
+const LOGO_URL = 'https://www.ai-methode.de/logo-aim.png'
 
 const GOLD   = rgb(0.722, 0.573, 0.165)   // #b8922a
 const GOLD_L = rgb(0.831, 0.667, 0.290)   // #d4aa4a
@@ -51,9 +53,19 @@ export async function GET() {
     const page   = pdfDoc.addPage([841.89, 595.28])
     const { width, height } = page.getSize()
 
-    const fontBold   = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-    const fontReg    = await pdfDoc.embedFont(StandardFonts.Helvetica)
+    const fontBold    = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+    const fontReg     = await pdfDoc.embedFont(StandardFonts.Helvetica)
     const fontOblique = await pdfDoc.embedFont(StandardFonts.HelveticaBoldOblique)
+
+    // Fetch & embed logo
+    let logoImage: Awaited<ReturnType<typeof pdfDoc.embedPng>> | null = null
+    try {
+      const logoRes = await fetch(LOGO_URL)
+      if (logoRes.ok) {
+        const logoBytes = await logoRes.arrayBuffer()
+        logoImage = await pdfDoc.embedPng(logoBytes)
+      }
+    } catch { /* logo optional — skip if unavailable */ }
 
     // ── Background ──────────────────────────────────────────────
     page.drawRectangle({ x: 0, y: 0, width, height, color: WHITE })
@@ -90,11 +102,22 @@ export async function GET() {
       page.drawText(text, { x: (width - textWidth) / 2, y, font, size, color })
     }
 
-    // ── Academy name ─────────────────────────────────────────────
-    drawCentered('AI METHODE ACADEMY', height - 68, fontBold, 9, GOLD)
+    // ── Logo ─────────────────────────────────────────────────────
+    if (logoImage) {
+      const logoDims = logoImage.scaleToFit(120, 48)
+      page.drawImage(logoImage, {
+        x: (width - logoDims.width) / 2,
+        y: height - 30 - logoDims.height,
+        width: logoDims.width,
+        height: logoDims.height,
+      })
+    } else {
+      // Fallback text if logo can't be loaded
+      drawCentered('AI METHODE ACADEMY', height - 68, fontBold, 9, GOLD)
+    }
 
     // ── Gold divider lines ────────────────────────────────────────
-    const divY = height - 86
+    const divY = height - 96
     page.drawRectangle({ x: width / 2 - 60, y: divY, width: 50, height: 1, color: GOLD })
     page.drawRectangle({ x: width / 2 + 10, y: divY, width: 50, height: 1, color: GOLD })
     // center dot
