@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Trash2, ShieldOff, ShieldCheck } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { deleteUser, banUser, unbanUser } from '@/app/admin/actions'
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function UserActions({ userId, userName, isBanned }: Props) {
+  const router = useRouter()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [banOpen, setBanOpen]       = useState(false)
   const [pending, startTransition]  = useTransition()
@@ -32,10 +34,12 @@ export function UserActions({ userId, userName, isBanned }: Props) {
   function handleBan() {
     startTransition(async () => {
       const result = await banUser(userId)
+      setBanOpen(false)
       if (result?.error) {
         alert('Fehler beim Sperren:\n' + result.error)
+      } else {
+        router.refresh()
       }
-      setBanOpen(false)
     })
   }
 
@@ -44,6 +48,8 @@ export function UserActions({ userId, userName, isBanned }: Props) {
       const result = await unbanUser(userId)
       if (result?.error) {
         alert('Fehler beim Entsperren:\n' + result.error)
+      } else {
+        router.refresh()
       }
     })
   }
