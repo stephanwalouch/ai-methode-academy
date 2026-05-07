@@ -7,14 +7,6 @@ import { createClient, createAdminClient } from '@/lib/supabase/server'
 export async function deleteCourse(courseId: string) {
   const supabase = await createClient()
 
-  // Delete in correct order (FK constraints):
-  // 1. lesson_progress (references lessons)
-  // 2. notes (references lessons)
-  // 3. lessons (references modules)
-  // 4. modules (references courses)
-  // 5. course itself
-
-  // Get all module ids for this course
   const { data: modules } = await supabase
     .from('modules')
     .select('id')
@@ -23,7 +15,6 @@ export async function deleteCourse(courseId: string) {
   const moduleIds = modules?.map(m => m.id) ?? []
 
   if (moduleIds.length > 0) {
-    // Get all lesson ids for these modules
     const { data: lessons } = await supabase
       .from('lessons')
       .select('id')
@@ -32,19 +23,14 @@ export async function deleteCourse(courseId: string) {
     const lessonIds = lessons?.map(l => l.id) ?? []
 
     if (lessonIds.length > 0) {
-      // Delete lesson_progress
       await supabase.from('lesson_progress').delete().in('lesson_id', lessonIds)
-      // Delete notes
       await supabase.from('notes').delete().in('lesson_id', lessonIds)
-      // Delete lessons
       await supabase.from('lessons').delete().in('module_id', moduleIds)
     }
 
-    // Delete modules
     await supabase.from('modules').delete().eq('course_id', courseId)
   }
 
-  // Finally delete the course
   const { error } = await supabase.from('courses').delete().eq('id', courseId)
   if (error) throw new Error(error.message)
 
@@ -56,12 +42,10 @@ export async function deleteUser(userId: string) {
   const supabase      = await createClient()
   const adminSupabase = await createAdminClient()
 
-  // Delete user data first
   await supabase.from('lesson_progress').delete().eq('user_id', userId)
   await supabase.from('notes').delete().eq('user_id', userId)
   await supabase.from('profiles').delete().eq('id', userId)
 
-  // Delete auth user (requires service role)
   const { error } = await adminSupabase.auth.admin.deleteUser(userId)
   if (error) throw new Error(error.message)
 
@@ -90,6 +74,9 @@ export async function banUser(userId: string): Promise<{ error: string } | null>
 
 // ─── Unban User ───────────────────────────────────────────────────────────────
 export async function unbanUser(userId: string): Promise<{ error: string } | null> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { error: 'SUPABASE_SERVICE_ROLE_KEY ist nicht gesetzt (Vercel Environment Variables).' }
+  }
   try {
     const supabase = await createAdminClient()
     const { error } = await supabase
