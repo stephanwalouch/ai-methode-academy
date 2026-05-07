@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { Users, Mail, TrendingUp, CheckCircle2, Activity } from 'lucide-react'
+import { Users, Mail, TrendingUp, CheckCircle2, Activity, FileText } from 'lucide-react'
 import Link from 'next/link'
 import { BroadcastForm } from './BroadcastForm'
 import { UserActions } from './UserActions'
@@ -178,11 +178,18 @@ export default async function NutzerPage() {
 
                     {/* Aktionen */}
                     <td className="px-4 py-3">
-                      <UserActions
-                        userId={user.id}
-                        userName={user.full_name || user.email || 'Nutzer'}
-                        isBanned={isBanned}
-                      />
+                      <div className="flex items-center gap-1">
+                        <Link href={`/admin/nutzer/${user.id}`}
+                          className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-500"
+                          title="Notizen ansehen">
+                          <FileText className="h-4 w-4" />
+                        </Link>
+                        <UserActions
+                          userId={user.id}
+                          userName={user.full_name || user.email || 'Nutzer'}
+                          isBanned={isBanned}
+                        />
+                      </div>
                     </td>
                   </tr>
                 )

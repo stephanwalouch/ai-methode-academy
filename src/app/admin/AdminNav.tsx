@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { clsx } from 'clsx'
-import { LayoutDashboard, BookOpen, Link2, Palette, ArrowLeft, GraduationCap, LogOut, Users, Megaphone } from 'lucide-react'
+import { LayoutDashboard, BookOpen, Link2, Palette, ArrowLeft, GraduationCap, LogOut, Users, Megaphone, BarChart3 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/admin/kurse',             label: 'Kurse verwalten',  icon: BookOpen },
   { href: '/admin/nutzer',            label: 'Nutzer',           icon: Users },
   { href: '/admin/ankuendigungen',    label: 'Ankündigungen',    icon: Megaphone },
+  { href: '/admin/analytics',         label: 'Analytics',        icon: BarChart3 },
   { href: '/admin/einladungen',       label: 'Einladungslinks',  icon: Link2 },
   { href: '/admin/branding',          label: 'Branding',         icon: Palette },
 ]
