@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { VideoPlayer } from './VideoPlayer'
 import { CompletionToast } from './CompletionToast'
+
+const POS_KEY = (lessonId: string) => `vpos_${lessonId}`
+const SAVE_INTERVAL_SEC = 5  // save to localStorage every 5 seconds
 
 interface Props {
   videoId: string
@@ -29,12 +32,37 @@ export function VideoAutoComplete({
 }: Props) {
   const [completed, setCompleted] = useState(initialCompleted)
   const [toast, setToast]         = useState<'lesson' | 'module' | null>(null)
+  const [startAt, setStartAt]     = useState<number | undefined>(undefined)
   const router = useRouter()
+
+  // Read saved position on mount (client-only)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(POS_KEY(lessonId))
+      if (saved) {
+        const pos = parseFloat(saved)
+        if (pos > 5) setStartAt(pos)
+      }
+    } catch { /* ignore */ }
+  }, [lessonId])
+
+  const lastSavedRef = useRef(0)
+  const handleTimeUpdate = useCallback((currentTime: number) => {
+    if (currentTime - lastSavedRef.current >= SAVE_INTERVAL_SEC) {
+      lastSavedRef.current = currentTime
+      try {
+        localStorage.setItem(POS_KEY(lessonId), String(currentTime))
+      } catch { /* ignore */ }
+    }
+  }, [lessonId])
 
   const dismiss = useCallback(() => setToast(null), [])
 
   const handleEnded = useCallback(async () => {
     if (completed) return
+    // Clear saved position when video finishes
+    try { localStorage.removeItem(POS_KEY(lessonId)) } catch { /* ignore */ }
+
     const supabase = createClient()
     const { error } = await supabase
       .from('lesson_progress')
@@ -57,7 +85,14 @@ export function VideoAutoComplete({
 
   return (
     <>
-      <VideoPlayer videoId={videoId} libraryId={libraryId} title={title} onEnded={handleEnded} />
+      <VideoPlayer
+        videoId={videoId}
+        libraryId={libraryId}
+        title={title}
+        startAt={startAt}
+        onEnded={handleEnded}
+        onTimeUpdate={handleTimeUpdate}
+      />
       {toast && (
         <CompletionToast
           type={toast}

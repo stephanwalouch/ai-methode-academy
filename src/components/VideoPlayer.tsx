@@ -7,23 +7,28 @@ interface VideoPlayerProps {
   videoId: string
   libraryId: string
   title: string
+  startAt?: number   // seconds to seek to on load
   onEnded?: () => void
+  onTimeUpdate?: (currentTime: number) => void
 }
 
-export function VideoPlayer({ videoId, libraryId, title, onEnded }: VideoPlayerProps) {
+export function VideoPlayer({ videoId, libraryId, title, startAt, onEnded, onTimeUpdate }: VideoPlayerProps) {
   const [loaded, setLoaded] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
-  const src = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=false&loop=false&muted=false&preload=false&responsive=true`
+  const startParam = startAt && startAt > 5 ? `&t=${Math.floor(startAt)}` : ''
+  const src = `https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=false&loop=false&muted=false&preload=false&responsive=true${startParam}`
 
   useEffect(() => {
-    if (!onEnded) return
     const handler = (e: MessageEvent) => {
       try {
         const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
         // Bunny Stream player.js protocol
         if (data?.event === 'ended' || data?.type === 'ended') {
-          onEnded()
+          onEnded?.()
+        }
+        if ((data?.event === 'timeupdate' || data?.type === 'timeupdate') && typeof data.currentTime === 'number') {
+          onTimeUpdate?.(data.currentTime)
         }
       } catch {
         // ignore non-JSON messages
@@ -31,7 +36,7 @@ export function VideoPlayer({ videoId, libraryId, title, onEnded }: VideoPlayerP
     }
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
-  }, [onEnded])
+  }, [onEnded, onTimeUpdate])
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl bg-black shadow-xl" style={{ paddingTop: '56.25%' }}>

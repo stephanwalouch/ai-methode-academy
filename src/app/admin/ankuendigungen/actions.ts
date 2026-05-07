@@ -26,6 +26,13 @@ export async function toggleAnnouncement(id: string, isActive: boolean) {
   revalidatePath('/dashboard')
 }
 
+export async function updateAnnouncement(id: string, title: string, body: string) {
+  const supabase = await createClient()
+  await supabase.from('announcements').update({ title: title.trim(), body: body.trim() }).eq('id', id)
+  revalidatePath('/admin/ankuendigungen')
+  revalidatePath('/dashboard')
+}
+
 export async function deleteAnnouncement(id: string) {
   const supabase = await createClient()
   await supabase.from('announcements').delete().eq('id', id)

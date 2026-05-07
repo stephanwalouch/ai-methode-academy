@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   if (!email) return NextResponse.json({ ok: false }, { status: 400 })
 
   // Always return 200 to prevent email enumeration
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://academy.ai-methode.de'
 
   try {
     const supabase = await createAdminClient()

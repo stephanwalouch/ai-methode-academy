@@ -24,6 +24,12 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const path = request.nextUrl.pathname
 
+  // Update last_seen_at for logged-in users (max once per 5 min via cookie)
+  if (user && !request.cookies.get('_seen')) {
+    supabase.from('profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', user.id).then(() => {})
+    supabaseResponse.cookies.set('_seen', '1', { maxAge: 300, path: '/' })
+  }
+
   const isAuthRoute = path === '/login' || path === '/registrieren'
   const isAdminRoute = path.startsWith('/admin')
   const isPublicRoute = path === '/' || path === '/impressum' || path === '/datenschutz' || path === '/passwort-vergessen' || path === '/passwort-reset' || path.startsWith('/api/invites/')

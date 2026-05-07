@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 const FROM = 'AI Methode Academy <noreply@ai-methode.de>'
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://ai-methode.de'
+const APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? 'https://academy.ai-methode.de'
 
 // ─────────────────────────────────────────────
 // Shared layout helpers

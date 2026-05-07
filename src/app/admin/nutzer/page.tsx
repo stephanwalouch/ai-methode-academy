@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { Users, Mail } from 'lucide-react'
+import { Users, Mail, TrendingUp, CheckCircle2, Activity } from 'lucide-react'
 import Link from 'next/link'
 import { BroadcastForm } from './BroadcastForm'
 import { UserActions } from './UserActions'
@@ -39,6 +39,20 @@ export default async function NutzerPage() {
 
   const students = (profiles ?? []).filter(p => p.role !== 'admin')
 
+  // Analytics
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const activeThisWeek = students.filter(u => u.last_seen_at && u.last_seen_at > sevenDaysAgo).length
+  const avgProgress = students.length > 0 && totalLessons > 0
+    ? Math.round(
+        students.reduce((s, u) => s + (progressByUser.get(u.id) ?? 0), 0)
+        / students.length / totalLessons * 100
+      )
+    : 0
+  const completed100 = students.filter(u => {
+    const done = progressByUser.get(u.id) ?? 0
+    return totalLessons > 0 && done >= totalLessons
+  }).length
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -55,6 +69,25 @@ export default async function NutzerPage() {
         </div>
       </div>
 
+      {/* Analytics-Kacheln */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[
+          { label: 'Mitglieder', value: students.length, icon: Users, sub: 'gesamt' },
+          { label: 'Aktiv', value: activeThisWeek, icon: Activity, sub: 'letzte 7 Tage' },
+          { label: 'Ø Fortschritt', value: `${avgProgress}%`, icon: TrendingUp, sub: 'aller Mitglieder' },
+          { label: 'Abgeschlossen', value: completed100, icon: CheckCircle2, sub: '100 % des Kurses' },
+        ].map(stat => (
+          <div key={stat.label} className="card p-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ background: '#fdf8ee' }}>
+              <stat.icon className="h-4 w-4" style={{ color: '#b8922a' }} />
+            </div>
+            <p className="mt-3 text-2xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-xs font-medium text-gray-700">{stat.label}</p>
+            <p className="text-[11px] text-gray-400">{stat.sub}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Tabelle */}
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
@@ -65,7 +98,7 @@ export default async function NutzerPage() {
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Fortschritt</th>
                 <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400 sm:table-cell">Videos</th>
                 <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400 md:table-cell">Registriert</th>
-                <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400 lg:table-cell">Letzter Login</th>
+                <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400 lg:table-cell">Zuletzt aktiv</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Status</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Aktionen</th>
               </tr>
@@ -82,8 +115,8 @@ export default async function NutzerPage() {
               {students.map(user => {
                 const done       = progressByUser.get(user.id) ?? 0
                 const pct        = totalLessons > 0 ? Math.round((done / totalLessons) * 100) : 0
-                const lastLogin  = authMap.get(user.id) ?? null
-                const isActive   = lastLogin && (Date.now() - new Date(lastLogin).getTime()) < 7 * 24 * 60 * 60 * 1000
+                const lastSeen   = user.last_seen_at ?? authMap.get(user.id) ?? null
+                const isActive   = lastSeen && (Date.now() - new Date(lastSeen).getTime()) < 7 * 24 * 60 * 60 * 1000
                 const isBanned   = user.is_banned === true
 
                 return (
@@ -122,9 +155,9 @@ export default async function NutzerPage() {
                       <span className="text-xs text-gray-500">{fmtDate(user.created_at)}</span>
                     </td>
 
-                    {/* Letzter Login */}
+                    {/* Zuletzt aktiv */}
                     <td className="hidden px-4 py-3 lg:table-cell">
-                      <span className="text-xs text-gray-500">{fmtDateTime(lastLogin)}</span>
+                      <span className="text-xs text-gray-500">{fmtDateTime(lastSeen)}</span>
                     </td>
 
                     {/* Status */}

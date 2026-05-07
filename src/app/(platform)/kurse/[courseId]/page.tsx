@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CheckCircle, PlayCircle, Clock, Layers } from 'lucide-react'
+import { LessonSearch } from '@/components/LessonSearch'
 
 export default async function CoursePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params
@@ -13,7 +14,7 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
       id, title, description,
       modules(
         id, title, description, sort_order,
-        lessons(id, sort_order, is_published, duration_seconds)
+        lessons(id, title, sort_order, is_published, duration_seconds)
       )
     `).eq('id', courseId).eq('is_published', true).single(),
     supabase.from('lesson_progress').select('lesson_id').eq('user_id', user!.id),
@@ -23,7 +24,7 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
 
   if (!course) notFound()
 
-  type Lesson = { id: string; sort_order: number; is_published: boolean; duration_seconds: number | null }
+  type Lesson = { id: string; title: string; sort_order: number; is_published: boolean; duration_seconds: number | null }
   type Module = { id: string; title: string; description: string | null; sort_order: number; lessons: Lesson[] }
 
   const completedIds = new Set(progress?.map(p => p.lesson_id) ?? [])
@@ -39,6 +40,18 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
   const currentLessonId = lastViewed?.lesson_id
   const nextUnfinished  = allLessons.find(l => !completedIds.has(l.id))
   const continueLesson  = allLessons.find(l => l.id === currentLessonId) ?? nextUnfinished ?? allLessons[0]
+
+  // Build flat list for search
+  const searchableLessons = modules.flatMap(m =>
+    m.lessons.filter(l => l.is_published).map(l => ({
+      id: l.id,
+      title: l.title,
+      moduleTitle: m.title,
+      courseId: course.id,
+      isCompleted: completedIds.has(l.id),
+      durationSeconds: l.duration_seconds,
+    }))
+  )
 
   return (
     <div className="space-y-6 pb-10">
@@ -86,6 +99,11 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
           )}
         </div>
       </div>
+
+      {/* Lektion-Suche */}
+      {allLessons.length > 4 && (
+        <LessonSearch lessons={searchableLessons} />
+      )}
 
       {/* Modul-Grid */}
       <div>
