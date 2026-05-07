@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Brand Color Variables
+   (overridden dynamically via inline <style> in layout.tsx)
+   ============================================================ */
+:root {
+  --brand-50:  #fdf8ee;
+  --brand-100: #f9edcf;
+  --brand-200: #f2d99a;
+  --brand-500: #b8922a;
+  --brand-600: #9a7820;
+  --brand-700: #7d6118;
+  --brand-900: #3d2f0a;
+}
+
+/* ============================================================
+   Base – LIGHT MODE ONLY (identical to pre-dark-mode state)
+   ============================================================ */
+@layer base {
+  body {
+    background-color: #f7f7f5;
+    @apply text-gray-900 antialiased;
+  }
+}
+
+/* ============================================================
+   Components – LIGHT MODE ONLY (identical to pre-dark-mode)
+   ============================================================ */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: #b8922a;
+  }
+  .btn-primary:hover:not(:disabled) { background-color: #9a7820; }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    border: 1px solid rgba(0,0,0,0.10);
+  }
+  .btn-secondary:hover:not(:disabled) { background-color: #f7f7f5; }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .card {
+    @apply rounded-[18px] bg-white;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .input {
+    @apply block w-full rounded-xl border-0 py-2.5 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6;
+    --tw-ring-color: rgba(184,146,42,0.5);
+  }
+  .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(184,146,42,0.25);
+    ring-color: #b8922a;
+  }
+
+  .label {
+    @apply block text-sm font-medium leading-6 text-gray-700;
+  }
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+
+/* ============================================================
+   DARK MODE OVERRIDES
+   Placed OUTSIDE any @layer so they have the highest cascade
+   priority and correctly override @layer utilities classes.
+   Only active when .dark class is on <html>.
+   Light mode is 100% unaffected by everything below.
+   ============================================================ */
+
+/* Body */
+.dark body { background-color: #111111; color: #f0f0f0; }
+
+/* Component classes */
+.dark .card {
+  background-color: #1c1c1c;
+  border-color: rgba(255,255,255,0.07);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+.dark .input {
+  background-color: #1c1c1c;
+  color: #f0f0f0;
+  --tw-ring-color: #333;
+}
+.dark .input::placeholder { color: #555; }
+.dark .input:focus { box-shadow: 0 0 0 2px rgba(184,146,42,0.35); }
+.dark .label { color: #d0d0d0; }
+.dark .btn-secondary {
+  background-color: #2a2a2a;
+  color: #d0d0d0;
+  border-color: rgba(255,255,255,0.12);
+}
+.dark .btn-secondary:hover:not(:disabled) { background-color: #333; }
+
+/* Backgrounds */
+.dark .bg-white   { background-color: #1c1c1c; }
+.dark .bg-gray-50 { background-color: #161616; }
+.dark .bg-gray-100{ background-color: #252525; }
+.dark .bg-gray-200{ background-color: #333; }
+
+/* Text */
+.dark .text-gray-900 { color: #f0f0f0; }
+.dark .text-gray-800 { color: #e8e8e8; }
+.dark .text-gray-700 { color: #d0d0d0; }
+.dark .text-gray-600 { color: #a0a0a0; }
+.dark .text-gray-500 { color: #888; }
+.dark .text-gray-400 { color: #666; }
+.dark .text-gray-300 { color: #555; }
+
+/* Borders */
+.dark .border-gray-100 { border-color: #2a2a2a; }
+.dark .border-gray-200 { border-color: #333; }
+.dark .ring-gray-200   { --tw-ring-color: #333; }
+
+/* Coloured subtle backgrounds */
+.dark .bg-blue-50   { background-color: rgba(59,130,246,0.12); }
+.dark .bg-blue-100  { background-color: rgba(59,130,246,0.18); }
+.dark .bg-purple-50 { background-color: rgba(168,85,247,0.12); }
+.dark .bg-green-50  { background-color: rgba(34,197,94,0.12); }
+.dark .bg-green-100 { background-color: rgba(34,197,94,0.18); }
+.dark .bg-red-50    { background-color: rgba(239,68,68,0.12); }
+.dark .bg-amber-50  { background-color: rgba(245,158,11,0.12); }
+.dark .bg-amber-100 { background-color: rgba(245,158,11,0.18); }
+.dark .bg-orange-50 { background-color: rgba(249,115,22,0.12); }
+
+/* Coloured text */
+.dark .text-blue-500   { color: #60a5fa; }
+.dark .text-blue-600   { color: #60a5fa; }
+.dark .text-purple-500 { color: #c084fc; }
+.dark .text-green-300  { color: #4ade80; }
+.dark .text-green-500  { color: #4ade80; }
+.dark .text-green-600  { color: #22c55e; }
+.dark .text-green-700  { color: #4ade80; }
+.dark .text-red-700    { color: #f87171; }
+.dark .text-red-600    { color: #f87171; }
+.dark .text-amber-700  { color: #fcd34d; }
+.dark .text-amber-400  { color: #fbbf24; }
+
+/* Coloured rings */
+.dark .ring-green-200 { --tw-ring-color: rgba(34,197,94,0.3); }
+.dark .ring-red-200   { --tw-ring-color: rgba(239,68,68,0.3); }
+.dark .ring-amber-200 { --tw-ring-color: rgba(245,158,11,0.3); }
+
+/* Scrollbar in dark */
+.dark ::-webkit-scrollbar-thumb       { background: #3a3a3a; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* ConfirmDialog + admin table rows in dark */
+.dark .bg-red-50\/40  { background-color: rgba(239,68,68,0.08); }
+.dark .bg-red-50\/60  { background-color: rgba(239,68,68,0.12); }
+.dark .hover\:bg-red-50\/60:hover { background-color: rgba(239,68,68,0.12); }
+.dark .hover\:bg-red-50:hover     { background-color: rgba(239,68,68,0.12); }
+.dark .hover\:bg-amber-50:hover   { background-color: rgba(245,158,11,0.12); }
+.dark .hover\:bg-green-50:hover   { background-color: rgba(34,197,94,0.12); }
+.dark .hover\:bg-gray-100:hover   { background-color: #2a2a2a; }
+
+/* ============================================================
+   MOBILE TOUCH TARGETS (under 768px only)
+   Desktop styles are completely unaffected.
+   ============================================================ */
+@media (max-width: 767px) {
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    padding-top:    0.75rem;   /* 12px – slightly larger than py-2.5 (10px) */
+    padding-bottom: 0.75rem;
+    min-height:     2.75rem;   /* 44px – Apple HIG recommended touch target */
+  }
+}
