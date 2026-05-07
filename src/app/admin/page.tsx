@@ -31,9 +31,11 @@ export default async function AdminPage() {
     return acc + (c.modules as { lessons: { id: string }[] }[]).reduce((a, m) => a + m.lessons.length, 0)
   }, 0) ?? 0
 
-  // Durchschnittlicher Fortschritt aller User
+  // Durchschnittlicher Fortschritt — nur Studenten, Admins ausgeschlossen
+  const studentIds = new Set(students.map(s => s.id))
   const progressByUser = new Map<string, number>()
   allProgress?.forEach(p => {
+    if (!studentIds.has(p.user_id)) return   // Admin-Fortschritt ignorieren
     progressByUser.set(p.user_id, (progressByUser.get(p.user_id) ?? 0) + 1)
   })
   const avgProgress = students.length > 0 && totalLessons > 0
