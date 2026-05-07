@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Users, BookOpen, Link2, TrendingUp, Clock, Award } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 function fmtDate(d: string | null) {
   if (!d) return '—'
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
