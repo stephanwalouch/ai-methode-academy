@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { CheckCircle, PlayCircle, Clock, TrendingUp, BookMarked, ChevronRight, ArrowRight } from 'lucide-react'
+import { CheckCircle, PlayCircle, Clock, TrendingUp, BookMarked, ChevronRight, ArrowRight, Award, Download } from 'lucide-react'
 import { LogoImage } from '@/components/LogoImage'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 
@@ -127,9 +127,9 @@ export default async function DashboardPage() {
             </Link>
           )}
           {overallPct === 100 && (
-            <div className="mt-6 inline-flex items-center gap-2 rounded-xl border border-green-400/30 bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-300">
-              <CheckCircle className="h-4 w-4" /> Kurs abgeschlossen!
-            </div>
+            <Link href="/abschluss" className="mt-6 inline-flex items-center gap-2 rounded-xl border border-green-400/30 bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-300 transition-opacity hover:opacity-80">
+              <CheckCircle className="h-4 w-4" /> Kurs abgeschlossen! → Zertifikat
+            </Link>
           )}
         </div>
       </div>
@@ -171,6 +171,42 @@ export default async function DashboardPage() {
           <p className="mt-0.5 text-xs text-gray-400">Aktuelles Modul</p>
         </div>
       </div>
+
+      {/* Abschluss-Karte (wenn 100%) */}
+      {overallPct === 100 && (
+        <div className="relative overflow-hidden rounded-[22px] border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-7 dark:border-amber-800/30 dark:from-amber-900/20 dark:to-transparent">
+          {/* Deko */}
+          <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-amber-100/60 dark:bg-amber-900/20" />
+          <div className="pointer-events-none absolute -bottom-6 right-24 h-24 w-24 rounded-full bg-amber-200/40 dark:bg-amber-800/10" />
+
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl text-3xl"
+                style={{ background: 'linear-gradient(135deg, #b8922a, #d4a93a)' }}>
+                🏆
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">Herzlichen Glückwunsch!</p>
+                <h2 className="mt-0.5 text-xl font-black text-gray-900">Du hast den Kurs abgeschlossen</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Lade dein persönliches Zertifikat herunter oder rufe die Abschlussseite auf.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-shrink-0 flex-col gap-2 sm:items-end">
+              <Link
+                href="/abschluss"
+                className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02]"
+                style={{ background: 'linear-gradient(90deg, #b8922a, #c9a030)' }}
+              >
+                <Award className="h-4 w-4" />
+                Abschlussseite & Zertifikat
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Weiter lernen */}
       {nextLesson && overallPct < 100 && (

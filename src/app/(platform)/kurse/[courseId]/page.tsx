@@ -93,8 +93,17 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
             </Link>
           )}
           {pct === 100 && (
-            <div className="mt-6 inline-flex items-center gap-2 rounded-xl bg-green-500/20 border border-green-400/30 px-5 py-2.5 text-sm font-semibold text-green-300">
-              <CheckCircle className="h-4 w-4" /> Kurs abgeschlossen!
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-xl bg-green-500/20 border border-green-400/30 px-5 py-2.5 text-sm font-semibold text-green-300">
+                <CheckCircle className="h-4 w-4" /> Kurs abgeschlossen!
+              </div>
+              <Link
+                href="/abschluss"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-bold shadow-md transition-transform hover:scale-[1.02]"
+                style={{ color: '#b8922a' }}
+              >
+                🏆 Zertifikat herunterladen
+              </Link>
             </div>
           )}
         </div>
