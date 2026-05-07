@@ -70,6 +70,9 @@ export async function deleteUser(userId: string) {
 
 // ─── Ban User ─────────────────────────────────────────────────────────────────
 export async function banUser(userId: string): Promise<{ error: string } | null> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { error: 'SUPABASE_SERVICE_ROLE_KEY ist nicht gesetzt (Vercel Environment Variables).' }
+  }
   try {
     const supabase = await createAdminClient()
     const { error } = await supabase
