@@ -69,27 +69,35 @@ export async function deleteUser(userId: string) {
 }
 
 // ─── Ban User ─────────────────────────────────────────────────────────────────
-export async function banUser(userId: string) {
-  const supabase = await createAdminClient()
+export async function banUser(userId: string): Promise<{ error: string } | null> {
+  try {
+    const supabase = await createAdminClient()
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_banned: true })
+      .eq('id', userId)
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_banned: true })
-    .eq('id', userId)
-
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/nutzer')
+    if (error) return { error: error.message }
+    revalidatePath('/admin/nutzer')
+    return null
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : String(e) }
+  }
 }
 
 // ─── Unban User ───────────────────────────────────────────────────────────────
-export async function unbanUser(userId: string) {
-  const supabase = await createAdminClient()
+export async function unbanUser(userId: string): Promise<{ error: string } | null> {
+  try {
+    const supabase = await createAdminClient()
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_banned: false })
+      .eq('id', userId)
 
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_banned: false })
-    .eq('id', userId)
-
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/nutzer')
+    if (error) return { error: error.message }
+    revalidatePath('/admin/nutzer')
+    return null
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : String(e) }
+  }
 }

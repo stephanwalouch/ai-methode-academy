@@ -31,24 +31,19 @@ export function UserActions({ userId, userName, isBanned }: Props) {
 
   function handleBan() {
     startTransition(async () => {
-      try {
-        await banUser(userId)
-        setBanOpen(false)
-      } catch (err) {
-        console.error(err)
-        alert('Fehler beim Sperren:\n' + (err instanceof Error ? err.message : String(err)))
-        setBanOpen(false)
+      const result = await banUser(userId)
+      if (result?.error) {
+        alert('Fehler beim Sperren:\n' + result.error)
       }
+      setBanOpen(false)
     })
   }
 
   function handleUnban() {
     startTransition(async () => {
-      try {
-        await unbanUser(userId)
-      } catch (err) {
-        console.error(err)
-        alert('Fehler beim Entsperren des Nutzers.')
+      const result = await unbanUser(userId)
+      if (result?.error) {
+        alert('Fehler beim Entsperren:\n' + result.error)
       }
     })
   }
