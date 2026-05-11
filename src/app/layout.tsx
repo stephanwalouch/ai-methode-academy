@@ -5,6 +5,7 @@ import './globals.css'
 import { createClient } from '@/lib/supabase/server'
 import { NavigationProgress } from '@/components/NavigationProgress'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </Suspense>
           {children}
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   )
