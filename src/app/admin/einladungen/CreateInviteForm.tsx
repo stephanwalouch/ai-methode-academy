@@ -126,7 +126,7 @@ export function CreateInviteForm() {
           {result.emailSent ? (
             <p className="text-sm font-medium text-green-800">E-Mail wurde versandt.</p>
           ) : (
-            <p className="text-sm font-medium text-green-800">Link erstellt. Kein E-Mail-Versand (RESEND_API_KEY nicht konfiguriert).</p>
+            <p className="text-sm font-medium text-green-800">Einladungslink ist zum Kopieren bereit.</p>
           )}
           <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-white p-3">
             <p className="flex-1 truncate font-mono text-xs text-gray-600">{result.inviteUrl}</p>
