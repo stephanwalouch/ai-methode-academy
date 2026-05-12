@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { CheckCircle, Clock, PlayCircle, TrendingUp, BookMarked } from 'lucide-react'
+import { CheckCircle, Clock, PlayCircle, TrendingUp, BookMarked, Trophy } from 'lucide-react'
 
 function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -123,16 +123,28 @@ export default async function FortschrittPage() {
           </div>
         )}
 
-        {/* Aktuelles Modul */}
-        <div className="card p-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 mb-3">
-            <BookMarked className="h-4 w-4 text-purple-500" />
+        {/* Aktuelles Modul / Kurs abgeschlossen */}
+        {overallPct === 100 ? (
+          <Link href="/abschluss" className="card p-5 block transition-shadow hover:shadow-md" style={{ background: 'linear-gradient(135deg, #fdf8ee, #fffbf2)' }}>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg mb-3" style={{ background: '#fdf8ee', border: '1.5px solid #e8c97a' }}>
+              <Trophy className="h-4 w-4" style={{ color: '#b8922a' }} />
+            </div>
+            <p className="text-sm font-bold leading-snug" style={{ color: '#b8922a' }}>
+              Kurs abgeschlossen!
+            </p>
+            <p className="mt-0.5 text-xs" style={{ color: '#c9a030' }}>Zertifikat herunterladen →</p>
+          </Link>
+        ) : (
+          <div className="card p-5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 mb-3">
+              <BookMarked className="h-4 w-4 text-purple-500" />
+            </div>
+            <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
+              {currentModule?.title ?? '—'}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-400">Aktuelles Modul</p>
           </div>
-          <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
-            {currentModule?.title ?? '—'}
-          </p>
-          <p className="mt-0.5 text-xs text-gray-400">Aktuelles Modul</p>
-        </div>
+        )}
       </div>
 
       {/* Zuletzt angeschaut */}

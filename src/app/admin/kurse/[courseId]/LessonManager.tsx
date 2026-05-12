@@ -33,7 +33,7 @@ export function LessonManager({ moduleId, lessons: initial }: { moduleId: string
       bunny_video_id:  form.bunny_video_id.trim() || null,
       bunny_library_id: form.bunny_library_id.trim() || null,
       duration_seconds: form.duration_seconds ? parseInt(form.duration_seconds) : null,
-      sort_order:      lessons.length,
+      sort_order:      lessons.length > 0 ? Math.max(...lessons.map(l => l.sort_order)) + 1 : 0,
       is_published:    true,
     }).select().single()
     if (data) setLessons(prev => [...prev, data])

@@ -21,14 +21,15 @@ export default async function NutzerPage() {
 
   const [{ data: profiles }, { data: courses }, { data: allProgress }, { data: authUsers }] = await Promise.all([
     supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-    supabase.from('courses').select('id, modules(id, lessons(id))'),
+    supabase.from('courses').select('id, modules(id, lessons(id, is_published))'),
     supabase.from('lesson_progress').select('user_id, lesson_id'),
     adminSupabase.auth.admin.listUsers(),
   ])
 
-  // Gesamtlektionen
+  // Gesamtlektionen (nur veröffentlichte)
   const totalLessons = courses?.reduce((acc, c) =>
-    acc + (c.modules as { lessons: { id: string }[] }[]).reduce((a, m) => a + m.lessons.length, 0), 0) ?? 0
+    acc + (c.modules as { lessons: { id: string; is_published: boolean }[] }[])
+      .reduce((a, m) => a + m.lessons.filter(l => l.is_published).length, 0), 0) ?? 0
 
   // Fortschritt pro User
   const progressByUser = new Map<string, number>()

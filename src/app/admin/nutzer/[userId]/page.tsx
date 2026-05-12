@@ -1,5 +1,5 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, FileText, BookOpen, Clock } from 'lucide-react'
 
@@ -12,6 +12,12 @@ export default async function UserNotesPage({ params }: { params: Promise<{ user
   const { userId } = await params
   const supabase      = await createClient()
   const adminSupabase = await createAdminClient()
+
+  // Verify the requesting user is an admin
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser) redirect('/login')
+  const { data: currentProfile } = await supabase.from('profiles').select('role').eq('id', currentUser.id).single()
+  if (currentProfile?.role !== 'admin') redirect('/dashboard')
 
   const [{ data: profile }, { data: notes }, { data: courses }] = await Promise.all([
     supabase.from('profiles').select('full_name, email, role').eq('id', userId).single(),

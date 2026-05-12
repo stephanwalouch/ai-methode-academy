@@ -46,6 +46,9 @@ export function VideoAutoComplete({
     } catch { /* ignore */ }
   }, [lessonId])
 
+  // Track completed IDs in a ref so it stays up-to-date across multiple video completions
+  const completedIdsRef = useRef(new Set(initialCompletedIds))
+
   const lastSavedRef = useRef(0)
   const handleTimeUpdate = useCallback((currentTime: number) => {
     if (currentTime - lastSavedRef.current >= SAVE_INTERVAL_SEC) {
@@ -68,20 +71,20 @@ export function VideoAutoComplete({
       .from('lesson_progress')
       .upsert({ user_id: userId, lesson_id: lessonId })
     if (!error) {
+      completedIdsRef.current.add(lessonId)
       setCompleted(true)
       onCompleted?.()
-      const nowCompleted = new Set([...initialCompletedIds, lessonId])
 
       // Redirect to congratulations page if all course lessons are done
-      if (courseLessonIds.length > 0 && courseLessonIds.every(id => nowCompleted.has(id))) {
+      if (courseLessonIds.length > 0 && courseLessonIds.every(id => completedIdsRef.current.has(id))) {
         router.push('/abschluss')
         return
       }
 
-      const moduleComplete = moduleLessonIds.length > 0 && moduleLessonIds.every(id => nowCompleted.has(id))
+      const moduleComplete = moduleLessonIds.length > 0 && moduleLessonIds.every(id => completedIdsRef.current.has(id))
       setToast(moduleComplete ? 'module' : 'lesson')
     }
-  }, [completed, lessonId, userId, moduleLessonIds, initialCompletedIds, courseLessonIds, onCompleted, router])
+  }, [completed, lessonId, userId, moduleLessonIds, courseLessonIds, onCompleted, router])
 
   return (
     <>

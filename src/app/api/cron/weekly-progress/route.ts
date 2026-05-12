@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
   const [{ data: profiles }, { data: courses }, { data: allProgress }] = await Promise.all([
     supabase.from('profiles').select('id, full_name, email, role').neq('role', 'admin'),
     supabase.from('courses').select('id, modules(id, lessons(id, is_published, title))').eq('is_published', true).order('sort_order').limit(1).single(),
-    supabase.from('lesson_progress').select('user_id, lesson_id'),
+    supabase.from('lesson_progress').select('user_id, lesson_id').limit(50000),
   ])
 
   if (!profiles?.length) return NextResponse.json({ sent: 0 })

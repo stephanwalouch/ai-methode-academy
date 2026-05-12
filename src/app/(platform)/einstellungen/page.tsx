@@ -26,11 +26,15 @@ export default function EinstellungenPage() {
 
   async function updateProfile(e: React.FormEvent) {
     e.preventDefault()
+    if (!fullName.trim()) {
+      setProfileMsg({ type: 'err', text: 'Bitte gib deinen Namen ein.' })
+      return
+    }
     setLoading(true)
     setProfileMsg(null)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    const { error } = await supabase.from('profiles').update({ full_name: fullName }).eq('id', user!.id)
+    const { error } = await supabase.from('profiles').update({ full_name: fullName.trim() }).eq('id', user!.id)
     setProfileMsg(error ? { type: 'err', text: 'Fehler beim Speichern.' } : { type: 'ok', text: 'Profil gespeichert.' })
     setLoading(false)
   }

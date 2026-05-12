@@ -65,12 +65,9 @@ export default async function AnalyticsPage() {
   })
 
   // Dropout: where did the most users stop?
-  const biggestDropoffs = [...lessonRows]
-    .filter((_, i) => i > 0)
-    .map((row, i) => ({
-      ...row,
-      dropoff: (lessonRows[i]?.pct ?? row.pct) - row.pct,
-    }))
+  const biggestDropoffs = lessonRows
+    .slice(1)
+    .map((row, i) => ({ ...row, dropoff: lessonRows[i].pct - row.pct }))
     .filter(r => r.dropoff > 0)
     .sort((a, b) => b.dropoff - a.dropoff)
     .slice(0, 3)
